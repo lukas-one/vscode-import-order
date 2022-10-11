@@ -3,7 +3,7 @@
   "displayName": "import-order",
   "description": "",
   "version": "0.0.1",
-	"publisher": "luke-trimby",
+	"publisher": "lukas-one",
 	"repository": "https://github.com/lukas-one/vscode-import-order.git",
   "engines": {
     "vscode": "^1.72.0"
