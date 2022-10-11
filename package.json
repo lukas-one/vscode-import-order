@@ -1,0 +1,118 @@
+{
+  "name": "import-order",
+  "displayName": "import-order",
+  "description": "",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.72.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:import-order.orderImports"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "import-order.orderImports",
+        "title": "Order Imports"
+      }
+    ],
+    "configuration": {
+      "title": "Import Ordering",
+      "properties": {
+        "orderImports.general.matchImportRegex": {
+          "type": "string",
+          "default": "^import.*|^const.*require|^await[ ]import.*",
+          "description": "The regex used for matching import lines"
+        },
+        "orderImports.general.matchPathRegex": {
+          "type": "string",
+          "default": "['\"].*['\"];?$|require[(]['\"].*['\"][)]|import[(]['\"].*['\"][)]",
+          "description": "The regex used for matching import path strings"
+        },
+        "orderImports.general.blankLinesBeforeGroup": {
+          "type": "number",
+          "default": 0,
+          "description": "The default amount of blank lines to place before groups (except first group, overridden by individual grouping rules)"
+        },
+        "orderImports.general.miscGroupIndex": {
+          "type": "number",
+          "default": 30,
+          "description": "The index of the group in which non-matching imports will be placed"
+        },
+        "orderImports.general.sorting": {
+          "enum": [
+            "Basic",
+            "None"
+          ],
+          "default": "Basic",
+          "description": "The default sorting method for groups"
+        },
+        "orderImports.general.pathSanitisers": {
+          "type": "array",
+          "default": [
+            {
+              "search": "\"",
+              "replace": "'",
+              "flags": "g"
+            },
+            {
+              "search": "require[(]|import[(]",
+              "replace": "",
+              "flags": ""
+            },
+            {
+              "search": "[)];?$",
+              "replace": "",
+              "flags": ""
+            },
+            {
+              "search": "'|;$",
+              "replace": "",
+              "flags": "g"
+            }
+          ],
+          "description": "The search and replace regexes used for sanitising import path strings"
+        },
+        "orderImports.grouping": {
+          "type": "array",
+          "description": "Describes how the imports should be matched and organised",
+          "default": [
+            {
+              "regex": "^$",
+              "index": 10
+            },
+            {
+              "regex": "^@",
+              "index": 20
+            }
+          ]
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.72.0",
+    "@types/glob": "^8.0.0",
+    "@types/mocha": "^10.0.0",
+    "@types/node": "16.x",
+    "@typescript-eslint/eslint-plugin": "^5.38.1",
+    "@typescript-eslint/parser": "^5.38.1",
+    "eslint": "^8.24.0",
+    "glob": "^8.0.3",
+    "mocha": "^10.0.0",
+    "typescript": "^4.8.4",
+    "@vscode/test-electron": "^2.1.5"
+  }
+}

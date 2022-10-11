@@ -1,0 +1,55 @@
+import './AppController.scss';
+import { useContext } from '@incentivegames/ig-frontend-common/lib/contexts/userContext';
+import { useTranslation } from 'react-i18next';
+import React, { useContext, useEffect, useState } from 'react';
+import * as vscode from 'vscode';
+import { ImportNode } from './interfaces/import-node';
+import * as path from 'path';
+import * as fs from 'fs';
+import { ImportOrderConfig } from './interfaces/configs'
+
+
+
+"default-import":  (?!^import\s\*)^import\s.*from
+import moment from "moment"
+
+"namespace-import":  ^import\s\*
+import * as moment from "moment"
+
+"import-equal":   ^import\s.*\=\srequire\(
+import moment = require("moment")
+
+"old-require":   ^const\s.*\=\srequire\(
+const moduleMoment = require("moment")
+
+"dynamic-import":
+import("moment").then()
+await import("moment")
+
+BACON AND CHEESE
+
+23789ysdafknj dsf''#
+23#'r!'
+
+
+
+"default-import":  (?!^import\s\*)^import\s.*from
+import moment from "moment"
+
+"namespace-import":  ^import\s\*
+import * as moment from "moment"
+
+"import-equal":   ^import\s.*\=\srequire\(
+import moment = require("moment")
+
+"old-require":   ^const\s.*\=\srequire\(
+const moduleMoment = require("moment")
+
+"dynamic-import":
+import("moment").then()
+await import("moment")
+
+BACON AND CHEESE
+
+23789ysdafknj dsf''#
+23#'r!'
