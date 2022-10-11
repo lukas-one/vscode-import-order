@@ -4,19 +4,16 @@ import { ImportNode } from './interfaces/import-node';
 import { EXTENSION_CONFIG_GENERAL, EXTENSION_CONFIG_GROUPING } from './constants';
 
 export function sortImports(editor: vscode.TextEditor, configs: vscode.WorkspaceConfiguration): boolean {
-    const doc: vscode.TextDocument = editor.document;
-    if (doc) {
+    if (editor.document) {
         try {
             const general: ImportOrderConfigGeneral | undefined = configs.get<ImportOrderConfigGeneral>(EXTENSION_CONFIG_GENERAL);
             const grouping: ImportOrderGroup[] | undefined = configs.get<ImportOrderGroup[]>(EXTENSION_CONFIG_GROUPING);
             if (general && grouping) {
-                const text = doc.getText();
-                const importNodes: ImportNode[] = getImportNodes(text, general);
+                const importNodes: ImportNode[] = getImportNodes(editor.document.getText(), general);
                 let groupedNodes: ImportNode[][] = groupImportNodes(importNodes, general, grouping);
                 groupedNodes = sortImportNodes(groupedNodes, general);
-                if (performImportOrder(importNodes, groupedNodes, editor, general, grouping)) {
-                    return true;
-                }
+                performImportOrder(importNodes, groupedNodes, editor, general, grouping);
+                return true;
             }
         } catch (error) {
             console.log(`Import Order Error`, error);
@@ -75,7 +72,7 @@ const sortImportNodes = (groupedNodes: ImportNode[][], general: ImportOrderConfi
     return groupedNodes;
 };
 
-const performImportOrder = (importNodes: ImportNode[], groupedNodes: ImportNode[][], editor: vscode.TextEditor, general: ImportOrderConfigGeneral, grouping: ImportOrderGroup[]): boolean => {
+const performImportOrder = (importNodes: ImportNode[], groupedNodes: ImportNode[][], editor: vscode.TextEditor, general: ImportOrderConfigGeneral, grouping: ImportOrderGroup[]) => {
     const descending = importNodes.reverse();
 
     const deletes = descending.map((node: ImportNode) => vscode.TextEdit.delete(
@@ -98,8 +95,6 @@ const performImportOrder = (importNodes: ImportNode[], groupedNodes: ImportNode[
         deletes.forEach(d => editBuilder.delete(d.range));
         editBuilder.insert(new vscode.Position(0, 0), insertText);
     });
-
-    return true;
 };
 
 const getBlankLinesForGroup = (groupIndex: number, general: ImportOrderConfigGeneral, grouping: ImportOrderGroup[]): number => {
