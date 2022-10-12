@@ -30,5 +30,8 @@ Knowledge of regular expressions
 ### 0.0.1
 
 Proof of concept
+### 0.0.2
+
+Bug Fix: Some import patterns leave trailing lines expanding whitespace
 
 **Enjoy!**

@@ -64,7 +64,7 @@ const groupImportNodes = (importNodes: ImportNode[], general: ImportOrderConfigG
             groupedNodes[general.miscGroupIndex].push(node);
         }
     });
-    groupedNodes = groupedNodes.filter((arr) => arr.length);
+    // groupedNodes = groupedNodes.filter((arr) => arr.length);
     return groupedNodes;
 };
 
@@ -73,32 +73,46 @@ const sortImportNodes = (groupedNodes: ImportNode[][], general: ImportOrderConfi
 };
 
 const performImportOrder = (importNodes: ImportNode[], groupedNodes: ImportNode[][], editor: vscode.TextEditor, general: ImportOrderConfigGeneral, grouping: ImportOrderGroup[]) => {
+    // calc groupings with matching array indices from user configs
+    const indexAwareGrouping: ImportOrderGroup[] = [];
+    grouping.forEach((g: ImportOrderGroup) => indexAwareGrouping[g.index] = g);
+    
+    // remove lines in descending order to preserve index
     const descending = importNodes.reverse();
-
     const deletes = descending.map((node: ImportNode) => vscode.TextEdit.delete(
         new vscode.Range( node.lineNo, 0, node.lineNo + 1, 0 )
     ));
 
     let insertText: string = '';
-    groupedNodes.forEach((group: ImportNode[], groupIndex: number) => {
-        if (general.sorting === SortingType.basic) {
-            group = group.sort((a: ImportNode, b: ImportNode) => a.path.localeCompare(b.path));
+    groupedNodes.forEach((nodes: ImportNode[], groupIndex: number) => {
+        // calc some useful stuff
+        const indexAwareGroup: ImportOrderGroup = indexAwareGrouping[groupIndex];
+        const isFirstGroup: boolean = indexAwareGroup.index === grouping[0].index;
+
+        // do sorting
+        sortNodes(nodes, general);
+
+        // insert blank lines before groups
+        const blankLines = !isNaN(indexAwareGroup.blankLinesBefore) ? indexAwareGroup.blankLinesBefore : general.blankLinesBeforeGroup;
+        if (!isFirstGroup) {
+            insertText += new Array(blankLines).fill('\r\n').join('');
         }
-        let blankLines = getBlankLinesForGroup(groupIndex, general, grouping);
-        if (groupIndex > 0 && blankLines > 0) {
-            insertText += '\r\n';
-        }
-        group.forEach((node: ImportNode, i) => insertText += (groupIndex > 0 || i > 0 ? '\r\n' : '') + node.text);
+
+        // write import string
+        nodes.forEach((node: ImportNode, i) => {
+            insertText += (!isFirstGroup || i > 0 ? '\r\n' : '') + node.text;
+        });
     });
 
+    // write edits in editor
     editor.edit((editBuilder: vscode.TextEditorEdit) => {
         deletes.forEach(d => editBuilder.delete(d.range));
         editBuilder.insert(new vscode.Position(0, 0), insertText);
     });
 };
 
-const getBlankLinesForGroup = (groupIndex: number, general: ImportOrderConfigGeneral, grouping: ImportOrderGroup[]): number => {
-    let blankLines = general.blankLinesBeforeGroup;
-    blankLines = grouping[groupIndex].blankLinesBefore;
-    return blankLines;
+const sortNodes = (nodes: ImportNode[], general: ImportOrderConfigGeneral) => {
+    if (general.sorting === SortingType.basic) {
+        return nodes.sort((a: ImportNode, b: ImportNode) => a.path.localeCompare(b.path));
+    }
 };

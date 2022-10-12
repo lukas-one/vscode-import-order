@@ -11,30 +11,21 @@ import { ImportOrderConfig } from './interfaces/configs'
 
 
 
-"default-import":  (?!^import\s\*)^import\s.*from
-import moment from "moment"
+export function activate(context: vscode.ExtensionContext) {
 
+	let disposable: vscode.Disposable = vscode.commands.registerCommand(`${EXTENSION_SLUG}.${EXTENSION_COMMAND_NAME}`, () => {
+		const editor: vscode.TextEditor | undefined = vscode.window.activeTextEditor;
+		const configs: vscode.WorkspaceConfiguration = workspace.getConfiguration(EXTENSION_CONFIG_NAME);
+		if (editor) {
+			if (sortImports(editor, configs)) {
+				vscode.window.showInformationMessage('Successfully Ordered Imports');
+			} else {
+				vscode.window.showErrorMessage(`Import Order - Something went wrong. Please log a bug.`);
+			}
+		}
+	});
 
+	context.subscriptions.push(disposable);
+}
 
-
-
-
-
-
-"namespace-import":  ^import\s\*
-import * as moment from "moment"
-
-"import-equal":   ^import\s.*\=\srequire\(
-import moment = require("moment")
-
-"old-require":   ^const\s.*\=\srequire\(
-const moduleMoment = require("moment")
-
-"dynamic-import":
-import("moment").then()
-await import("moment")
-
-BACON AND CHEESE
-
-23789ysdafknj dsf''#
-23#'r!'
+export function deactivate() {}
