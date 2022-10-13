@@ -1,0 +1,22 @@
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+
+import './HistoryButton.scss';
+
+interface HistoryButtonProps {
+    openHistory: () => void;
+}
+
+const HistoryButton: React.FC<HistoryButtonProps> = ({ openHistory }) => {
+    const { t } = useTranslation();
+
+    return (
+        <div className='history-button'>
+            <button onClick={openHistory} className='history-button__text'>
+                {t('history-modal-button')}
+            </button>
+        </div>
+    );
+};
+
+export default HistoryButton;

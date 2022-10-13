@@ -1,3 +1,4 @@
+import { ImportNode } from "./import-node";
 
 export enum SortingType {
     basic = "Basic",
@@ -19,9 +20,10 @@ export interface ImportOrderConfigGeneral {
 }
 
 export interface ImportOrderGroup {
-    regex: string;
     index: number;
-    blankLinesBefore: number;
+    regex: string;
+    nodes: ImportNode[];
+    blankLinesBefore?: number;
 }
 
 export interface PathSanitiser {

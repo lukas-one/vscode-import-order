@@ -28,10 +28,14 @@ Knowledge of regular expressions
 ## Release Notes
 
 ### 0.0.1
-
 Proof of concept
-### 0.0.2
 
+### 0.0.2
 Bug Fix: Some import patterns leave trailing lines expanding whitespace
+
+### 0.0.3
+Making better use of vscode api
+Bug Fix: whitespace after imports doesn't calculate correctly
+Bug Fix: running command sometimes duplicates all code in editor
 
 **Enjoy!**
