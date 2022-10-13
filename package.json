@@ -2,7 +2,7 @@
   "name": "import-order",
   "displayName": "import-order",
   "description": "",
-  "version": "0.1.0",
+  "version": "0.1.1",
 	"publisher": "lukas-one",
 	"repository": "https://github.com/lukas-one/vscode-import-order.git",
   "engines": {

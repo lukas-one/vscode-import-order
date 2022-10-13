@@ -1,0 +1,26 @@
+import React from 'react';
+
+import ResultsScreen from 'components/Screens/ResultsScreen/ResultsScreen';
+import { GameResult, ProgressBarState, QuestionData } from 'controller/GameState.types';
+
+const progressBarWin: ProgressBarState[] = ['success', 'success', 'success', 'success'];
+const progressBarLost: ProgressBarState[] = ['fail', 'success', 'fail', 'success'];
+const questions: QuestionData[] = [];
+const gameResultWin: GameResult = { tag: 'won', prize: { value: 4000, currency: 'USD' } };
+const gameResultLost: GameResult = { tag: 'lost' };
+
+export const TestResultsScreenWin: React.FC = () => {
+  return (
+    <div className="game-root">
+      <ResultsScreen progressBar={progressBarWin} questions={questions} gameResult={gameResultWin} />;
+    </div>
+  );
+};
+
+export const TestResultsScreenLost: React.FC = () => {
+  return (
+    <div className="game-root">
+      <ResultsScreen progressBar={progressBarLost} questions={questions} gameResult={gameResultLost} />;
+    </div>
+  );
+};

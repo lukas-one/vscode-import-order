@@ -17,7 +17,7 @@ export function activate(context: vscode.ExtensionContext) {
 				if (exitCode === AppExitCode.success) {
 					vscode.window.showInformationMessage('Successfully ordered imports');
 				} else if (exitCode === AppExitCode.noImportsFound){
-					vscode.window.showErrorMessage(`Import Order - No imports found.`);
+					vscode.window.showWarningMessage(`Import Order - No imports found.`);
 				} else {
 					vscode.window.showErrorMessage(`Import Order - Something went wrong. Please log a bug.`);
 				}

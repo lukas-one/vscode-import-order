@@ -5,7 +5,7 @@ import { EXTENSION_CONFIG_GENERAL, EXTENSION_CONFIG_GROUPING } from './constants
 import { AppExitCode } from './extension';
 
 export async function sortImports(editor: vscode.TextEditor, configs: vscode.WorkspaceConfiguration): Promise<AppExitCode> {
-    return new Promise<any>((resolve: (value?: any) => any, reject: (value?: any) => any) => {
+    return new Promise<any>((resolve: (value?: any) => any) => {
         if (editor.document) {
             try {
                 const general: ImportOrderConfigGeneral | undefined = configs.get<ImportOrderConfigGeneral>(EXTENSION_CONFIG_GENERAL);
@@ -114,17 +114,17 @@ const sortGroupings = (grouping: ImportOrderGroup[], general: ImportOrderConfigG
     }
 };
 
-const removeImportSectionFromEditor = async (nodes: ImportNode[], editor: vscode.TextEditor): Promise<boolean> => {
+const removeImportSectionFromEditor = (nodes: ImportNode[], editor: vscode.TextEditor): Promise<boolean> => {
     return new Promise<any>((resolve: (value?: any) => any) => {
         const highestLineNo: number = Math.max(...nodes.map((node: ImportNode) => node.lineNo));
-        const del: vscode.TextEdit = vscode.TextEdit.delete( new vscode.Range( 0, 0, highestLineNo + 1, 0 ));
+        const deleteRange: vscode.Range = editor.document.validateRange(new vscode.Range(0, 0, highestLineNo + 1, 0));
         editor.edit((editBuilder: vscode.TextEditorEdit) => {
-            editBuilder.delete(del.range);
+            editBuilder.delete(deleteRange);
         }).then(() => resolve(true));
     });
 };
 
-const insertOrderedImports = async(grouping: ImportOrderGroup[], editor: vscode.TextEditor, general: ImportOrderConfigGeneral): Promise<boolean> => {
+const insertOrderedImports = (grouping: ImportOrderGroup[], editor: vscode.TextEditor, general: ImportOrderConfigGeneral): Promise<boolean> => {
     return new Promise<any>((resolve: (value?: any) => any) => {
         let writeText: string = '';
         grouping?.forEach((group: ImportOrderGroup, i: number) => {
@@ -139,9 +139,13 @@ const insertOrderedImports = async(grouping: ImportOrderGroup[], editor: vscode.
             }
             group.nodes.forEach((node: ImportNode) => writeText += node.text + '\n');
         });
-        editor.edit((editBuilder: vscode.TextEditorEdit) => {
-            editBuilder.insert(new vscode.Position(0, 0), writeText);
-        }).then(() => resolve(true));
+        if (writeText) {
+            editor.edit((editBuilder: vscode.TextEditorEdit) => {
+                editBuilder.insert(new vscode.Position(0, 0), writeText);
+            }).then(() => resolve(true));
+        } else {
+            resolve();
+        }
     });
 };
 
